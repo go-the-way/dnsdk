@@ -9,19 +9,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package internal
+package pkg
 
-type (
-	DomainListResp struct {
-		Total uint                   `json:"total"`
-		List  []DomainListRespDomain `json:"list"`
-	}
-	DomainListRespDomain struct {
-		Id          string `json:"id"`
-		Name        string `json:"name"`
-		RecordCount uint   `json:"record_count"`
-	}
-	RecordTypeListResp struct{}
-	RecordLineListResp struct{}
-	RecordListResp     struct{}
-)
+import "time"
+
+func FormatTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
+}

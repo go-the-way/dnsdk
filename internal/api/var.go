@@ -9,14 +9,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package internal
+package api
 
-func (c *cloudflareApiZonesResp) transform() (resp DomainListResp) {
-	resp.Total = uint(c.ResultInfo.TotalCount)
-	var list []DomainListRespDomain
-	for _, rst := range c.Result {
-		list = append(list, DomainListRespDomain{Id: rst.Id, Name: rst.Name})
-	}
-	resp.List = list
-	return
-}
+import (
+	"errors"
+)
+
+var (
+	ErrNotSupportedOperation = errors.New("不支持的操作")
+)
