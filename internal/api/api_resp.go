@@ -12,6 +12,15 @@
 package api
 
 type (
+	DomainGetResp struct {
+	}
+	LineListResp struct {
+		List []LineListRespLine `json:"list"`
+	}
+	LineListRespLine struct {
+		Id   string `json:"id"`   // 路线id
+		Name string `json:"name"` // 路线名称
+	}
 	RecordListResp struct {
 		Total uint                   `json:"total"`
 		List  []RecordListRespRecord `json:"list"`
@@ -25,13 +34,12 @@ type (
 		LineName   string `json:"line_name"`   // 线路名称 => 默认
 		Value      string `json:"value"`       // 记录值 => 1.1.1.1
 		TTL        uint   `json:"ttl"`         // TTL => 60
-		MX         string `json:"mx"`          // MX => 1
+		MX         uint16 `json:"mx"`          // MX => 1
+		Weight     uint   `json:"weight"`      // 权重 => 5
 		Remark     string `json:"remark"`      // 备注
 		CreateTime string `json:"create_time"` // 创建时间 => 2022-09-27 08:09:25
 		UpdateTime string `json:"update_time"` // 修改时间 => 2022-09-27 08:09:25
 	}
-	RecordAddResp struct {
-		RecordListRespRecord
-	}
-	RecordUpdateResp = RecordAddResp
+	RecordAddResp    struct{ RecordListRespRecord }
+	RecordUpdateResp RecordAddResp
 )

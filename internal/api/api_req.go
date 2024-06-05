@@ -12,48 +12,57 @@
 package api
 
 type (
-	DomainListReq struct {
-		PageNumber string `url:"page_number,omitempty"` // 页码
-		PageSize   string `url:"page_size,omitempty"`   // 每页数量
-		Name       string `url:"name,omitempty"`        // 域名名称
+	DomainGetReq struct {
 	}
-	TypeListReq   struct{}
-	LineListReq   struct{}
+	LineListReq struct {
+		DomainId string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		Domain   string `json:"domain"`    // 域名 => example.com
+	}
 	RecordListReq struct {
 		Page      uint   `form:"page"`      // 页码 => 1
 		Limit     uint   `form:"limit"`     // 每页数量 => 10
 		DomainId  string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		Domain    string `json:"domain"`    // 域名 => example.com
+		Record    string `json:"record"`    // 主机记录 => www
 		Type      string `form:"type"`      // 解析类型 => A
 		Value     string `form:"value"`     // 记录值 => 1.1.1.1
 		Remark    string `form:"remark"`    // 备注 => created by dnsdk
 		Order     string `form:"order"`     // 排序 => type
-		Direction string `form:"direction"` // 方向 => asc
+		Direction string `form:"direction"` // 方向 => asc / desc
 	}
 	RecordAddReq struct {
 		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		Domain   string `json:"domain"`    // 域名 => example.com
 		Record   string `json:"record"`    // 主机记录 => www
-		Name     string `json:"name"`      // 名称 => www.example.com
-		Type     string `json:"type"`      // 类型 => A
-		LineId   string `json:"line_id"`   // 线路id => 1
-		Value    string `json:"value"`     // 记录值 => 1.1.1.1
-		TTL      uint   `json:"ttl"`       // TTL => 60
-		Remark   string `json:"remark"`    // 备注 => created by dnsdk
+		// Name     string `json:"name"`      // 名称 => www.example.com
+		Type   string `json:"type"`    // 类型 => A
+		LineId string `json:"line_id"` // 线路id => 1
+		Value  string `json:"value"`   // 记录值 => 1.1.1.1
+		TTL    uint   `json:"ttl"`     // TTL => 60
+		MX     uint   `json:"mx"`      // MX => only for mx type
+		Weight uint   `json:"weight"`  // 权重 => 100
+		Remark string `json:"remark"`  // 备注 => created by dnsdk
 	}
 	RecordUpdateReq struct {
 		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
 		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		Domain   string `json:"domain"`    // 域名 => example.com
 		Record   string `json:"record"`    // 主机记录 => www
 		Name     string `json:"name"`      // 名称 => www.example.com
 		Type     string `json:"type"`      // 类型 => A
 		LineId   string `json:"line_id"`   // 线路id => 1
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
 		TTL      uint   `json:"ttl"`       // TTL => 60
+		MX       uint   `json:"mx"`        // MX => only for mx type
+		Weight   uint   `json:"weight"`    // 权重 => 100
 		Remark   string `json:"remark"`    // 备注 => created by dnsdk
 	}
 	RecordDeleteReq struct {
 		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
 		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
 	}
-	RecordEnableReq  struct{}
-	RecordDisableReq struct{}
+	RecordEnableReq struct {
+		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
+	}
+	RecordDisableReq RecordEnableReq
 )

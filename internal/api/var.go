@@ -13,8 +13,26 @@ package api
 
 import (
 	"errors"
+	"github.com/alibabacloud-go/tea/tea"
+	"strconv"
 )
 
-var (
-	ErrNotSupportedOperation = errors.New("不支持的操作")
-)
+var ErrNotSupportedOperation = errors.New("不支持的操作")
+
+func toLineMap(lines []LineListRespLine) map[string]string {
+	m := make(map[string]string)
+	for _, l := range lines {
+		m[l.Id] = l.Name
+	}
+	return m
+}
+
+func toUint(str string) uint {
+	i, _ := strconv.ParseUint(str, 10, 64)
+	return uint(i)
+}
+
+func toUint64Ptr(str string) *uint64 {
+	i, _ := strconv.ParseUint(str, 10, 64)
+	return tea.Uint64(i)
+}

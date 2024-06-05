@@ -12,6 +12,8 @@
 package api
 
 type Api interface {
+	DomainGet(req DomainGetReq) (resp DomainGetResp, err error)          // 域名获取
+	LineList(req LineListReq) (resp LineListResp, err error)             // 路线列表
 	RecordList(req RecordListReq) (resp RecordListResp, err error)       // 记录列表
 	RecordAdd(req RecordAddReq) (resp RecordAddResp, err error)          // 记录新增
 	RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) // 记录修改
