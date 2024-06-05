@@ -25,15 +25,17 @@ import (
 	"github.com/rwscode/dnsdk/internal/pkg"
 )
 
-func PqdnsApi(baseUrl, username, secretKey string) Api { return &pqdns{baseUrl, username, secretKey} }
+func PqdnsApi(baseUrl, username, secretKey string) Api {
+	return &pqdnsApi{baseUrl, username, secretKey}
+}
 
-type pqdns struct{ baseUrl, username, secretKey string }
+type pqdnsApi struct{ baseUrl, username, secretKey string }
 
-func (a *pqdns) getAuthUrl() string {
+func (a *pqdnsApi) getAuthUrl() string {
 	return fmt.Sprintf("user_name=%s&secret_key=%s", a.username, a.secretKey)
 }
 
-func (a *pqdns) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
+func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 	var prefix string
 	if strings.Contains(apiUrl, "?") {
 		prefix = "&"
@@ -72,17 +74,17 @@ func (a *pqdns) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 	return json.Unmarshal(buf, respT)
 }
 
-func (a *pqdns) DomainGet(req DomainGetReq) (resp DomainGetResp, err error) {
+func (a *pqdnsApi) DomainGet(req DomainGetReq) (resp DomainGetResp, err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdns) LineList(req LineListReq) (resp LineListResp, err error) {
+func (a *pqdnsApi) LineList(req LineListReq) (resp LineListResp, err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdns) RecordList(req RecordListReq) (resp RecordListResp, err error) {
+func (a *pqdnsApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
 	var rsp pqdnsRecordListResp
 	apiUrl := fmt.Sprintf("/api/ext/dns/record?host_record=%s&record_value=%s", req.Record, req.Value)
 	err = a.req(apiUrl, http.MethodGet, nil, &rsp)
@@ -90,29 +92,29 @@ func (a *pqdns) RecordList(req RecordListReq) (resp RecordListResp, err error) {
 	return
 }
 
-func (a *pqdns) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) {
+func (a *pqdnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) {
 	var rsp pqdnsRecordListResp
 	apiUrl := "/api/ext/dns/record"
 	err = a.req(apiUrl, http.MethodPost, (&pqdnsRecordAddReq{}).transform(a.username, a.secretKey, req), &rsp)
 	return
 }
 
-func (a *pqdns) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
+func (a *pqdnsApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdns) RecordDelete(req RecordDeleteReq) (err error) {
+func (a *pqdnsApi) RecordDelete(req RecordDeleteReq) (err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdns) RecordEnable(req RecordEnableReq) (err error) {
+func (a *pqdnsApi) RecordEnable(req RecordEnableReq) (err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdns) RecordDisable(req RecordDisableReq) (err error) {
+func (a *pqdnsApi) RecordDisable(req RecordDisableReq) (err error) {
 	// TODO implement me
 	panic("implement me")
 }
