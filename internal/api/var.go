@@ -13,8 +13,10 @@ package api
 
 import (
 	"errors"
-	"github.com/alibabacloud-go/tea/tea"
+	"fmt"
 	"strconv"
+
+	"github.com/alibabacloud-go/tea/tea"
 )
 
 var ErrNotSupportedOperation = errors.New("不支持的操作")
@@ -26,6 +28,8 @@ func toLineMap(lines []LineListRespLine) map[string]string {
 	}
 	return m
 }
+
+func i2s(i int) string { return fmt.Sprintf("%d", i) }
 
 func toUint(str string) uint {
 	i, _ := strconv.ParseUint(str, 10, 64)

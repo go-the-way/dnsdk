@@ -47,8 +47,6 @@ var (
 	cloudflareLine2ProxiedMap = map[byte]bool{cloudflareLineDef: cloudflarePxFalse, cloudflareLinePx: cloudflarePxTrue}
 )
 
-func i2s(i int) string { return fmt.Sprintf("%d", i) }
-
 func CloudflareApi(cApi *cloudflare.API) Api { return &cloudflareApi{cApi} }
 
 type cloudflareApi struct{ *cloudflare.API }
