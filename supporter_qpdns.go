@@ -9,34 +9,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package dnsdk
 
-import (
-	"errors"
-	"fmt"
-	"strconv"
-
-	"github.com/alibabacloud-go/tea/tea"
-)
-
-var ErrNotSupportedOperation = errors.New("不支持的操作")
-
-func toLineMap(lines []LineListRespLine) map[string]string {
-	m := make(map[string]string)
-	for _, l := range lines {
-		m[l.Id] = l.Name
-	}
-	return m
+func PqdnsSupporter[T any](supportFunc SupportFunc[T, *PqdnsSupportOpts]) supporter[T, *PqdnsSupportOpts] {
+	return &defaultSupporter[T, *PqdnsSupportOpts]{ApiType: ApiTypePqdns, SupportFunc: supportFunc}
 }
 
-func i2s(i int) string { return fmt.Sprintf("%d", i) }
+type PqdnsSupportOpts struct{ baseUrl, username, secretKey string }
 
-func toUint(str string) uint {
-	i, _ := strconv.ParseUint(str, 10, 64)
-	return uint(i)
-}
-
-func toUint64Ptr(str string) *uint64 {
-	i, _ := strconv.ParseUint(str, 10, 64)
-	return tea.Uint64(i)
+func NewPqdnsSupportOpts(baseUrl string, username string, secretKey string) *PqdnsSupportOpts {
+	return &PqdnsSupportOpts{baseUrl, username, secretKey}
 }

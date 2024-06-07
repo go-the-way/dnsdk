@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package internal
 
 import (
 	"fmt"
@@ -24,21 +24,23 @@ func DnspodApi(client *dnspod.Client) Api { return &dnspodApi{client} }
 
 type dnspodApi struct{ *dnspod.Client }
 
-func (a *dnspodApi) DomainGet(req DomainGetReq) (resp DomainGetResp, err error) {
-	// TODO implement me
-	panic("implement me")
+func (a *dnspodApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
+	req0 := dnspod.NewDescribeDomainListRequest()
+	req0.Keyword = tea.String(req.Domain)
+	req0.Offset = tea.Int64(int64((req.Page - 1) * req.Limit))
+	req0.Limit = tea.Int64(int64(req.Limit))
+	return resp.transformFromDnspod(a.DescribeDomainList(req0))
 }
 
-func (a *dnspodApi) LineList(req LineListReq) (resp LineListResp, err error) {
-	req0 := dnspod.NewDescribeRecordLineListRequest()
-	req0.DomainId = toUint64Ptr(req.DomainId)
+func (a *dnspodApi) DomainAdd(req DomainAddReq) (resp DomainAddResp, err error) {
+	req0 := dnspod.NewCreateDomainRequest()
 	req0.Domain = tea.String(req.Domain)
-	// TODO? 域名等级。
-	// + 旧套餐：D_FREE、D_PLUS、D_EXTRA、D_EXPERT、D_ULTRA 分别对应免费套餐、个人豪华、企业1、企业2、企业3。
-	// + 新套餐：DP_FREE、DP_PLUS、DP_EXTRA、DP_EXPERT、DP_ULTRA 分别对应新免费、个人专业版、企业创业版、企业标准版、企业旗舰版。
-	req0.DomainGrade = tea.String("DP_FREE")
-	_, err = a.DescribeRecordLineList(req0)
-	return resp.transformFromDnspod(a.DescribeRecordLineList(req0))
+	return resp.transformFromDnspod(a.CreateDomain(req0))
+}
+
+func (a *dnspodApi) DomainDelete(req DomainDeleteReq) (err error) {
+	// TODO implement me
+	panic("implement me")
 }
 
 func (a *dnspodApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
@@ -107,14 +109,54 @@ func (a *dnspodApi) RecordDisable(req RecordDisableReq) (err error) {
 	return a.recordStatus(req.RecordId, "DISABLE")
 }
 
-func dnspodRecordTransform(a *dnspod.RecordListItem) (record RecordListRespRecord) {
+func (a *dnspodApi) RecordStatusSupported() (supported bool) { return true }
+
+func (*DomainListResp) transformFromDnspod(a *dnspod.DescribeDomainListResponse, err0 error) (resp DomainListResp, err error) {
+	if err = err0; err != nil {
+		return
+	}
+	aa := a.Response
+	if aa == nil {
+		return
+	}
+	if dci := aa.DomainCountInfo; dci != nil {
+		resp.Total = uint(tea.Uint64Value(dci.AllTotal))
+	}
+	var list []DomainListRespDomain
+	if dls := aa.DomainList; dls != nil {
+		for _, aaa := range dls {
+			list = append(list, DomainListRespDomain{
+				Id:          fmt.Sprintf("%d", tea.Uint64Value(aaa.DomainId)),
+				Name:        tea.StringValue(aaa.Name),
+				DnsServer:   dnsServer(aaa.EffectiveDNS),
+				RecordCount: uint(tea.Uint64Value(aaa.RecordCount)),
+				Remark:      tea.StringValue(aaa.Remark),
+				CreateTime:  tea.StringValue(aaa.CreatedOn),
+			})
+		}
+	}
+	return
+}
+
+func (*DomainAddResp) transformFromDnspod(a *dnspod.CreateDomainResponse, err0 error) (resp DomainAddResp, err error) {
+	if err = err0; err != nil {
+		return
+	}
+	aa := a.Response
+	if aa == nil {
+		return
+	}
+	resp.Id = fmt.Sprintf("%d", tea.Uint64Value(aa.DomainInfo.Id))
+	resp.DnsServer = dnsServer(aa.DomainInfo.GradeNsList)
+	return
+}
+
+func (*RecordListRespRecord) dnspodRecordTransform(a *dnspod.RecordListItem) (record RecordListRespRecord) {
 	return RecordListRespRecord{
 		Id:         fmt.Sprintf("%d", tea.Uint64Value(a.RecordId)),
 		Record:     "", // TODO: replace from name
 		Name:       tea.StringValue(a.Name),
 		Type:       tea.StringValue(a.Type),
-		LineId:     "", // TODO:线路id
-		LineName:   "", // TODO:线路名称
 		Value:      tea.StringValue(a.Value),
 		TTL:        uint(tea.Uint64Value(a.TTL)),
 		MX:         uint16(tea.Uint64Value(a.MX)),
@@ -125,37 +167,37 @@ func dnspodRecordTransform(a *dnspod.RecordListItem) (record RecordListRespRecor
 	}
 }
 
-func dnspodRecordTransformAdd(a *dnspod.CreateRecordResponse) (record RecordListRespRecord) {
-	by := a.Response
-	if by == nil {
+func (*RecordListRespRecord) dnspodRecordTransformAdd(a *dnspod.CreateRecordResponse) (record RecordListRespRecord) {
+	aa := a.Response
+	if aa == nil {
 		return
 	}
-	return RecordListRespRecord{Id: fmt.Sprintf("%d", tea.Uint64Value(by.RecordId))}
+	return RecordListRespRecord{Id: fmt.Sprintf("%d", tea.Uint64Value(aa.RecordId))}
 }
 
-func dnspodRecordTransformUpdate(a *dnspod.ModifyRecordResponse) (record RecordListRespRecord) {
-	by := a.Response
-	if by == nil {
+func (*RecordListRespRecord) dnspodRecordTransformUpdate(a *dnspod.ModifyRecordResponse) (record RecordListRespRecord) {
+	aa := a.Response
+	if aa == nil {
 		return
 	}
-	return RecordListRespRecord{Id: fmt.Sprintf("%d", tea.Uint64Value(by.RecordId))}
+	return RecordListRespRecord{Id: fmt.Sprintf("%d", tea.Uint64Value(aa.RecordId))}
 }
 
 func (r *RecordListResp) transformFromDnspod(a *dnspod.DescribeRecordListResponse, err0 error) (resp RecordListResp, err error) {
 	if err = err0; err != nil {
 		return
 	}
-	by := a.Response
-	if by == nil {
+	aa := a.Response
+	if aa == nil {
 		return
 	}
-	if rci := by.RecordCountInfo; rci != nil {
+	if rci := aa.RecordCountInfo; rci != nil {
 		resp.Total = uint(tea.Uint64Value(rci.TotalCount))
 	}
 	var list = make([]RecordListRespRecord, 0)
-	if dr := by.RecordList; dr != nil {
-		for _, aa := range dr {
-			list = append(list, dnspodRecordTransform(aa))
+	if dr := aa.RecordList; dr != nil {
+		for _, aaa := range dr {
+			list = append(list, (&RecordListRespRecord{}).dnspodRecordTransform(aaa))
 		}
 	}
 	resp.List = list
@@ -166,7 +208,7 @@ func (r *RecordAddResp) transformFromDnspod(a *dnspod.CreateRecordResponse, err0
 	if err = err0; err != nil {
 		return
 	}
-	resp.RecordListRespRecord = dnspodRecordTransformAdd(a)
+	resp.RecordListRespRecord = (&RecordListRespRecord{}).dnspodRecordTransformAdd(a)
 	return
 }
 
@@ -174,22 +216,6 @@ func (r *RecordUpdateResp) transformFromDnspod(a *dnspod.ModifyRecordResponse, e
 	if err = err0; err != nil {
 		return
 	}
-	resp.RecordListRespRecord = dnspodRecordTransformUpdate(a)
-	return
-}
-
-func (r *LineListResp) transformFromDnspod(a *dnspod.DescribeRecordLineListResponse, err0 error) (resp LineListResp, err error) {
-	if err = err0; err != nil {
-		return
-	}
-	var list = make([]LineListRespLine, 0)
-	if resp0 := a.Response; resp0 != nil {
-		if lls := resp0.LineList; lls != nil {
-			for _, line := range lls {
-				list = append(list, LineListRespLine{tea.StringValue(line.LineId), tea.StringValue(line.Name)})
-			}
-		}
-	}
-	resp.List = list
+	resp.RecordListRespRecord = (&RecordListRespRecord{}).dnspodRecordTransformUpdate(a)
 	return
 }

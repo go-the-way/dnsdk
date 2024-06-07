@@ -9,17 +9,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package internal
 
 type Api interface {
-	DomainGet(req DomainGetReq) (resp DomainGetResp, err error)          // 域名获取
-	LineList(req LineListReq) (resp LineListResp, err error)             // 路线列表
+	DomainList(req DomainListReq) (resp DomainListResp, err error)       // 域名列表
+	DomainAdd(req DomainAddReq) (resp DomainAddResp, err error)          // 域名添加
+	DomainDelete(req DomainDeleteReq) (err error)                        // 域名删除
 	RecordList(req RecordListReq) (resp RecordListResp, err error)       // 记录列表
 	RecordAdd(req RecordAddReq) (resp RecordAddResp, err error)          // 记录新增
 	RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) // 记录修改
 	RecordDelete(req RecordDeleteReq) (err error)                        // 记录删除
 	RecordEnable(req RecordEnableReq) (err error)                        // 记录启用
 	RecordDisable(req RecordDisableReq) (err error)                      // 记录暂停
+	RecordStatusSupported() (supported bool)                             // 记录支持状态？
 }
-
-var defTypes = []string{"A", "CNAME", "MX", "TXT", "SPF", "SRV", "CAA", "SOA"}

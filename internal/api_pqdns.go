@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package internal
 
 import (
 	"bytes"
@@ -21,8 +21,6 @@ import (
 	"reflect"
 	"strings"
 	"time"
-
-	"github.com/rwscode/dnsdk/internal/pkg"
 )
 
 func PqdnsApi(baseUrl, username, secretKey string) Api {
@@ -71,17 +69,29 @@ func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 		err = err0
 		return
 	}
-	return json.Unmarshal(buf, respT)
+	if reflect.ValueOf(respT).IsValid() {
+		return json.Unmarshal(buf, respT)
+	}
+	return
 }
 
-func (a *pqdnsApi) DomainGet(req DomainGetReq) (resp DomainGetResp, err error) {
+func (a *pqdnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	// TODO implement me
 	panic("implement me")
 }
 
-func (a *pqdnsApi) LineList(req LineListReq) (resp LineListResp, err error) {
-	// TODO implement me
-	panic("implement me")
+// DomainAdd
+// TODO: pqdns domain add successful,then return domain id & ns server
+func (a *pqdnsApi) DomainAdd(req DomainAddReq) (resp DomainAddResp, err error) {
+	apiUrl := "/api/ext/dns/domain"
+	err = a.req(apiUrl, http.MethodPost, (&pqdnsDomainAddReq{}).transform(a.username, a.secretKey, req), &resp)
+	return
+}
+
+func (a *pqdnsApi) DomainDelete(req DomainDeleteReq) (err error) {
+	apiUrl := "/api/ext/dns/domain"
+	err = a.req(apiUrl, http.MethodDelete, (&pqdnsDomainDeleteReq{}).transform(a.username, a.secretKey, req), nil)
+	return
 }
 
 func (a *pqdnsApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
@@ -100,24 +110,67 @@ func (a *pqdnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) {
 }
 
 func (a *pqdnsApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
-	// TODO implement me
-	panic("implement me")
+	var rsp pqdnsRecordListResp
+	apiUrl := "/api/ext/dns/record"
+	err = a.req(apiUrl, http.MethodPut, (&pqdnsRecordUpdateReq{}).transform(a.username, a.secretKey, req), &rsp)
+	return
 }
 
 func (a *pqdnsApi) RecordDelete(req RecordDeleteReq) (err error) {
-	// TODO implement me
-	panic("implement me")
+	var rsp pqdnsRecordListResp
+	apiUrl := "/api/ext/dns/record"
+	err = a.req(apiUrl, http.MethodDelete, (&pqdnsRecordDeleteReq{}).transform(a.username, a.secretKey, req), &rsp)
+	return
 }
 
-func (a *pqdnsApi) RecordEnable(req RecordEnableReq) (err error) {
-	// TODO implement me
-	panic("implement me")
-}
+func (a *pqdnsApi) RecordEnable(_ RecordEnableReq) (err error) { return ErrNotSupportedOperation }
 
-func (a *pqdnsApi) RecordDisable(req RecordDisableReq) (err error) {
-	// TODO implement me
-	panic("implement me")
-}
+func (a *pqdnsApi) RecordDisable(_ RecordDisableReq) (err error) { return ErrNotSupportedOperation }
+
+func (a *pqdnsApi) RecordStatusSupported() (supported bool) { return }
+
+type (
+	pqdnsDomainAddReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		Domain    string `json:"domain"` // 域名
+	}
+	pqdnsDomainDeleteReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		Ids       []uint `json:"ids"` // 域名id
+	}
+	pqdnsRecordAddReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		DomainId  uint   `json:"domain_id"`
+		Host      string `json:"host"`
+		RecType   string `json:"rec_type"`
+		RecValue  string `json:"rec_value"`
+		LineId    uint   `json:"line_id"`
+		MX        uint   `json:"mx"`
+		Weight    uint   `json:"weight"`
+		TTL       uint   `json:"ttl"`
+	}
+	pqdnsRecordUpdateReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		RecordId  uint   `json:"record_id"`
+		Host      string `json:"host"`
+		RecType   string `json:"rec_type"`
+		RecValue  string `json:"rec_value"`
+		LineId    uint   `json:"line_id"`
+		MX        uint   `json:"mx"`
+		Weight    uint   `json:"weight"`
+		TTL       uint   `json:"ttl"`
+	}
+	pqdnsRecordDeleteReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		DomainId  uint   `json:"domain_id"`
+		RecordIds []uint `json:"record_id"`
+	}
+)
 
 type (
 	pqdnsRecordListResp struct {
@@ -144,6 +197,14 @@ type (
 	}
 )
 
+func (a *pqdnsDomainAddReq) transform(username, secretKey string, req DomainAddReq) (resp pqdnsDomainAddReq) {
+	return pqdnsDomainAddReq{username, secretKey, req.Domain}
+}
+
+func (a *pqdnsDomainDeleteReq) transform(username, secretKey string, req DomainDeleteReq) (resp pqdnsDomainDeleteReq) {
+	return pqdnsDomainDeleteReq{username, secretKey, []uint{toUint(req.Domain)}}
+}
+
 func (a *pqdnsRecordListResp) transform() (resp RecordListResp) {
 	var list []RecordListRespRecord
 	for _, rc := range a.List {
@@ -152,35 +213,17 @@ func (a *pqdnsRecordListResp) transform() (resp RecordListResp) {
 			Record:     rc.HostRecord,
 			Name:       fmt.Sprintf("%s.%s", rc.HostRecord, rc.DomainName),
 			Type:       rc.RecordType,
-			LineId:     fmt.Sprintf("%d", rc.LineId),
-			LineName:   rc.LineName,
 			Value:      rc.RecordValue,
 			TTL:        uint(rc.TTL),
 			MX:         uint16(rc.MX),
 			Weight:     uint(rc.Weight),
 			Remark:     "", // ignored
-			CreateTime: pkg.FormatTime(rc.CreateTime),
-			UpdateTime: pkg.FormatTime(rc.UpdateTime),
+			CreateTime: formatTime(rc.CreateTime),
+			UpdateTime: formatTime(rc.UpdateTime),
 		})
 	}
 	return RecordListResp{Total: a.Total, List: list}
 }
-
-type pqdnsRecordAddReq struct {
-	Username  string `json:"username"`
-	SecretKey string `json:"secret_key"`
-
-	DomainId uint `json:"domain_id"`
-
-	Host     string `json:"host"`
-	RecType  string `json:"rec_type"`
-	RecValue string `json:"rec_value"`
-	LineId   uint   `json:"line_id"`
-	MX       uint   `json:"mx"`
-	Weight   uint   `json:"weight"`
-	TTL      uint   `json:"ttl"`
-}
-
 func (a *pqdnsRecordAddReq) transform(username, secretKey string, req RecordAddReq) *pqdnsRecordAddReq {
 	return &pqdnsRecordAddReq{
 		Username:  username,
@@ -189,9 +232,33 @@ func (a *pqdnsRecordAddReq) transform(username, secretKey string, req RecordAddR
 		Host:      req.Record,
 		RecType:   req.Type,
 		RecValue:  req.Value,
-		LineId:    toUint(req.LineId),
+		LineId:    uint(1),
 		MX:        req.MX,
 		Weight:    req.Weight,
 		TTL:       req.TTL,
+	}
+}
+
+func (a *pqdnsRecordUpdateReq) transform(username, secretKey string, req RecordUpdateReq) *pqdnsRecordUpdateReq {
+	return &pqdnsRecordUpdateReq{
+		Username:  username,
+		SecretKey: secretKey,
+		RecordId:  toUint(req.RecordId),
+		Host:      req.Record,
+		RecType:   req.Type,
+		RecValue:  req.Value,
+		LineId:    uint(1),
+		MX:        req.MX,
+		Weight:    req.Weight,
+		TTL:       req.TTL,
+	}
+}
+
+func (a *pqdnsRecordDeleteReq) transform(username, secretKey string, req RecordDeleteReq) *pqdnsRecordDeleteReq {
+	return &pqdnsRecordDeleteReq{
+		Username:  username,
+		SecretKey: secretKey,
+		DomainId:  toUint(req.DomainId),
+		RecordIds: []uint{toUint(req.RecordId)},
 	}
 }

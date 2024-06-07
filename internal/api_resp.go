@@ -9,17 +9,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package internal
 
 type (
-	DomainGetResp struct {
+	DomainListResp struct {
+		Total uint                   `json:"total"`
+		List  []DomainListRespDomain `json:"list"`
 	}
-	LineListResp struct {
-		List []LineListRespLine `json:"list"`
+	DomainListRespDomain struct {
+		Id          string   `json:"id"`           // 域名id => xxxxxxxxxxxx
+		Name        string   `json:"name"`         // 域名名称 => example.com
+		DnsServer   []string `json:"dns_server"`   // DNS服务器 => [ns1.com, ns2.com]
+		RecordCount uint     `json:"record_count"` // 记录数 => 100
+		Remark      string   `json:"remark"`       // 备注
+		CreateTime  string   `json:"create_time"`  // 创建时间 => 2022-09-27 08:09:25
 	}
-	LineListRespLine struct {
-		Id   string `json:"id"`   // 路线id
-		Name string `json:"name"` // 路线名称
+	DomainAddResp struct {
+		Id        string   `json:"id"`         // 域名id => xxxxxxxxxxxx
+		DnsServer []string `json:"dns_server"` // DNS服务器 => [ns1.com, ns2.com]
 	}
 	RecordListResp struct {
 		Total uint                   `json:"total"`
@@ -30,8 +37,6 @@ type (
 		Record     string `json:"record"`      // 主机记录 => www
 		Name       string `json:"name"`        // 名称 => www.example.com
 		Type       string `json:"type"`        // 类型 => A
-		LineId     string `json:"line_id"`     // 线路id => 1
-		LineName   string `json:"line_name"`   // 线路名称 => 默认
 		Value      string `json:"value"`       // 记录值 => 1.1.1.1
 		TTL        uint   `json:"ttl"`         // TTL => 60
 		MX         uint16 `json:"mx"`          // MX => 1

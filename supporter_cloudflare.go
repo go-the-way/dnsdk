@@ -9,10 +9,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pkg
+package dnsdk
 
-import "time"
+func CloudflareSupporter[T any](supportFunc SupportFunc[T, *CloudflareSupportOpts]) supporter[T, *CloudflareSupportOpts] {
+	return &defaultSupporter[T, *CloudflareSupportOpts]{ApiType: ApiTypeCloudflare, SupportFunc: supportFunc}
+}
 
-func FormatTime(t time.Time) string {
-	return t.Format("2006-01-02 15:04:05")
+type CloudflareSupportOpts struct{ apiKey, email string }
+
+func NewCloudflareSupportOpts(apiKey string, email string) *CloudflareSupportOpts {
+	return &CloudflareSupportOpts{apiKey, email}
 }

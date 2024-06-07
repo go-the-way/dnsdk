@@ -9,44 +9,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package api
+package internal
 
 import (
 	"strings"
 	"time"
 
-	"github.com/alibabacloud-go/tea/tea"
-	"github.com/rwscode/dnsdk/internal/pkg"
-
 	alidns "github.com/alibabacloud-go/alidns-20150109/v4/client"
-)
-
-var (
-	alidnsLines = []LineListRespLine{
-		{"0", "default"},
-		{"10=1", "unicom"},
-		{"10=0", "telecom"},
-		{"10=3", "mobile"},
-		{"10=2", "edu"},
-		{"3=0", "oversea"},
-		{"10=22", "btvn"},
-		{"80=0", "search"},
-		{"7=0", "internal"},
-	}
-	alidnsLineMap = toLineMap(alidnsLines)
+	"github.com/alibabacloud-go/tea/tea"
 )
 
 func AlidnsApi(client *alidns.Client) Api { return &alidnsApi{client} }
 
 type alidnsApi struct{ *alidns.Client }
 
-func (a *alidnsApi) DomainGet(req DomainGetReq) (resp DomainGetResp, err error) {
-	// TODO implement me
-	panic("implement me")
+func (a *alidnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
+	return resp.transformFromAlidns(a.DescribeDomains(&alidns.DescribeDomainsRequest{
+		KeyWord:    tea.String(req.Domain),
+		PageNumber: tea.Int64(int64(req.Page)),
+		PageSize:   tea.Int64(int64(req.Limit)),
+		SearchMode: tea.String("EXACT"),
+		Starmark:   tea.Bool(true),
+	}))
 }
 
-func (a *alidnsApi) LineList(req LineListReq) (resp LineListResp, err error) {
-	return resp.transformFromAlidns(a.DescribeSupportLines(&alidns.DescribeSupportLinesRequest{DomainName: tea.String(req.Domain)}))
+func (a *alidnsApi) DomainAdd(req DomainAddReq) (resp DomainAddResp, err error) {
+	return resp.transformFromAlidns(a.AddDomain(&alidns.AddDomainRequest{DomainName: tea.String(req.Domain)}))
+}
+
+func (a *alidnsApi) DomainDelete(req DomainDeleteReq) (err error) {
+	_, err = a.DeleteDomain(&alidns.DeleteDomainRequest{DomainName: tea.String(req.Domain)})
+	return
 }
 
 func (a *alidnsApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
@@ -64,7 +57,7 @@ func (a *alidnsApi) RecordList(req RecordListReq) (resp RecordListResp, err erro
 func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) {
 	return resp.transformFromAlidns(a.AddDomainRecord(&alidns.AddDomainRecordRequest{
 		DomainName: tea.String(req.Domain),
-		Line:       tea.String(req.LineId),
+		Line:       tea.String("default"),
 		Priority:   tea.Int64(int64(req.MX)),
 		RR:         tea.String(req.Record),
 		TTL:        tea.Int64(int64(req.TTL)),
@@ -75,7 +68,7 @@ func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) 
 
 func (a *alidnsApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
 	return resp.transformFromAlidns(a.UpdateDomainRecord(&alidns.UpdateDomainRecordRequest{
-		Line:     tea.String(req.LineId),
+		Line:     tea.String("default"),
 		Priority: tea.Int64(int64(req.MX)),
 		RR:       tea.String(req.Record),
 		RecordId: tea.String(req.RecordId),
@@ -103,25 +96,61 @@ func (a *alidnsApi) RecordDisable(req RecordDisableReq) (err error) {
 	return a.recordStatus(req.RecordId, "Disable")
 }
 
-func alidnsRecordTransform(a *alidns.DescribeDomainRecordsResponseBodyDomainRecordsRecord) (record RecordListRespRecord) {
+func (a *alidnsApi) RecordStatusSupported() (supported bool) { return true }
+
+func (_ *DomainListRespDomain) transformFromAlidns(a *alidns.DescribeDomainsResponseBodyDomainsDomain) (domain DomainListRespDomain) {
+	return DomainListRespDomain{
+		Id:   tea.StringValue(a.DomainId),
+		Name: tea.StringValue(a.DomainName),
+		DnsServer: func() []string {
+			if ds := a.DnsServers; ds != nil {
+				return dnsServer(a.DnsServers.DnsServer)
+			}
+			return []string{}
+		}(),
+		RecordCount: uint(tea.Int64Value(a.RecordCount)),
+		Remark:      tea.StringValue(a.Remark),
+		CreateTime:  formatTime(time.UnixMilli(tea.Int64Value(a.CreateTimestamp))),
+	}
+}
+
+func (_ *DomainAddResp) transformFromAlidns(a *alidns.AddDomainResponse, err0 error) (resp DomainAddResp, err error) {
+	if err = err0; err != nil {
+		return
+	}
+	aa := a.Body
+	if aa == nil {
+		return
+	}
+	resp = DomainAddResp{
+		Id: tea.StringValue(aa.DomainId),
+		DnsServer: func() []string {
+			if ds := aa.DnsServers; ds != nil {
+				return dnsServer(ds.DnsServer)
+			}
+			return []string{}
+		}(),
+	}
+	return
+}
+
+func (_ *RecordListRespRecord) transformFromAlidns(a *alidns.DescribeDomainRecordsResponseBodyDomainRecordsRecord) (record RecordListRespRecord) {
 	return RecordListRespRecord{
 		Id:         tea.StringValue(a.RecordId),
 		Record:     tea.StringValue(a.RR),
 		Name:       tea.StringValue(a.RecordId),
 		Type:       tea.StringValue(a.Type),
-		LineId:     tea.StringValue(a.Line), // FIXME? "0" or "default"
-		LineName:   alidnsLineMap[tea.StringValue(a.Line)],
 		Value:      tea.StringValue(a.Value),
 		TTL:        uint(tea.Int64Value(a.TTL)),
 		MX:         uint16(tea.Int64Value(a.Priority)),
 		Weight:     uint(tea.Int32Value(a.Weight)),
 		Remark:     tea.StringValue(a.Remark),
-		CreateTime: pkg.FormatTime(time.UnixMilli(tea.Int64Value(a.CreateTimestamp))),
-		UpdateTime: pkg.FormatTime(time.UnixMilli(tea.Int64Value(a.UpdateTimestamp))),
+		CreateTime: formatTime(time.UnixMilli(tea.Int64Value(a.CreateTimestamp))),
+		UpdateTime: formatTime(time.UnixMilli(tea.Int64Value(a.UpdateTimestamp))),
 	}
 }
 
-func alidnsRecordTransformAdd(a *alidns.AddDomainRecordResponse) (record RecordListRespRecord) {
+func (_ *RecordListRespRecord) transformFromAlidnsAdd(a *alidns.AddDomainRecordResponse) (record RecordListRespRecord) {
 	if a.Body == nil {
 		return
 	}
@@ -135,18 +164,19 @@ func alidnsRecordTransformUpdate(a *alidns.UpdateDomainRecordResponse) (record R
 	return RecordListRespRecord{Id: tea.StringValue(a.Body.RecordId)}
 }
 
-func (r *LineListResp) transformFromAlidns(a *alidns.DescribeSupportLinesResponse, err0 error) (resp LineListResp, err error) {
+func (_ *DomainListResp) transformFromAlidns(a *alidns.DescribeDomainsResponse, err0 error) (resp DomainListResp, err error) {
 	if err = err0; err != nil {
 		return
 	}
-	by := a.Body
-	if by == nil {
+	aa := a.Body
+	if aa == nil {
 		return
 	}
-	var list []LineListRespLine
-	if dr := by.RecordLines; dr != nil {
-		for _, aa := range dr.RecordLine {
-			list = append(list, LineListRespLine{tea.StringValue(aa.LineCode), tea.StringValue(aa.LineName)})
+	resp.Total = uint(tea.Int64Value(aa.TotalCount))
+	var list []DomainListRespDomain
+	if dr := aa.Domains; dr != nil {
+		for _, dd := range dr.Domain {
+			list = append(list, (&DomainListRespDomain{}).transformFromAlidns(dd))
 		}
 	}
 	resp.List = list
@@ -157,26 +187,26 @@ func (r *RecordListResp) transformFromAlidns(a *alidns.DescribeDomainRecordsResp
 	if err = err0; err != nil {
 		return
 	}
-	by := a.Body
-	if by == nil {
+	aa := a.Body
+	if aa == nil {
 		return
 	}
-	resp.Total = uint(tea.Int64Value(by.TotalCount))
+	resp.Total = uint(tea.Int64Value(aa.TotalCount))
 	var list []RecordListRespRecord
-	if dr := by.DomainRecords; dr != nil {
-		for _, aa := range dr.Record {
-			list = append(list, alidnsRecordTransform(aa))
+	if dr := aa.DomainRecords; dr != nil {
+		for _, rr := range dr.Record {
+			list = append(list, (&RecordListRespRecord{}).transformFromAlidns(rr))
 		}
 	}
 	resp.List = list
 	return
 }
 
-func (r *RecordAddResp) transformFromAlidns(a *alidns.AddDomainRecordResponse, err0 error) (resp RecordAddResp, err error) {
+func (_ *RecordAddResp) transformFromAlidns(a *alidns.AddDomainRecordResponse, err0 error) (resp RecordAddResp, err error) {
 	if err = err0; err != nil {
 		return
 	}
-	resp.RecordListRespRecord = alidnsRecordTransformAdd(a)
+	resp.RecordListRespRecord = resp.transformFromAlidnsAdd(a)
 	return
 }
 
