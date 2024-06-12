@@ -15,8 +15,8 @@ func CloudflareSupporter[T any](supportFunc SupportFunc[T, *CloudflareSupportOpt
 	return &defaultSupporter[T, *CloudflareSupportOpts]{ApiType: ApiTypeCloudflare, SupportFunc: supportFunc}
 }
 
-type CloudflareSupportOpts struct{ apiKey, email string }
+type CloudflareSupportOpts struct{ email, apiKey string }
 
-func NewCloudflareSupportOpts(apiKey string, email string) *CloudflareSupportOpts {
-	return &CloudflareSupportOpts{apiKey, email}
+func NewCloudflareSupportOpts(email string, apiKey string) *CloudflareSupportOpts {
+	return &CloudflareSupportOpts{email, apiKey}
 }
