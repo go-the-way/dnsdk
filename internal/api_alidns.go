@@ -23,6 +23,17 @@ func AlidnsApi(client *alidns.Client) Api { return &alidnsApi{client} }
 
 type alidnsApi struct{ *alidns.Client }
 
+func (a *alidnsApi) LineList() (resp LineListResp) {
+	lines := []LineListRespLine{
+		{"default", "默认"},
+		{"telecom", "电信"},
+		{"unicom", "联通"},
+		{"mobile", "移动"},
+		{"oversea", "境外"},
+	}
+	return LineListResp{lines}
+}
+
 func (a *alidnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	return resp.transformFromAlidns(a.DescribeDomains(&alidns.DescribeDomainsRequest{
 		KeyWord:    tea.String(req.Domain),
@@ -57,7 +68,7 @@ func (a *alidnsApi) RecordList(req RecordListReq) (resp RecordListResp, err erro
 func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) {
 	return resp.transformFromAlidns(a.AddDomainRecord(&alidns.AddDomainRecordRequest{
 		DomainName: tea.String(req.Domain),
-		Line:       tea.String("default"),
+		Line:       tea.String(req.Line),
 		Priority:   tea.Int64(int64(req.MX)),
 		RR:         tea.String(req.Record),
 		TTL:        tea.Int64(int64(req.TTL)),
@@ -68,7 +79,7 @@ func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) 
 
 func (a *alidnsApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
 	return resp.transformFromAlidns(a.UpdateDomainRecord(&alidns.UpdateDomainRecordRequest{
-		Line:     tea.String("default"),
+		Line:     tea.String(req.Line),
 		Priority: tea.Int64(int64(req.MX)),
 		RR:       tea.String(req.Record),
 		RecordId: tea.String(req.RecordId),

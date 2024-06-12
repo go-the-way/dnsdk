@@ -50,6 +50,7 @@ type (
 		Record   string `json:"record"`    // 主机记录 => www
 		Type     string `json:"type"`      // 类型 => A
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
+		Line     string `json:"line"`      //  线路 => 0
 		TTL      uint   `json:"ttl"`       // TTL => 60
 		MX       uint   `json:"mx"`        // MX => only for mx type
 		Weight   uint   `json:"weight"`    // 权重 => 100
@@ -63,6 +64,7 @@ type (
 		Name     string `json:"name"`      // 名称 => www.example.com
 		Type     string `json:"type"`      // 类型 => A
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
+		Line     string `json:"line"`      //  线路 => 0
 		TTL      uint   `json:"ttl"`       // TTL => 60
 		MX       uint   `json:"mx"`        // MX => only for mx type
 		Weight   uint   `json:"weight"`    // 权重 => 100

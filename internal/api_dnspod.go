@@ -24,6 +24,17 @@ func DnspodApi(client *dnspod.Client) Api { return &dnspodApi{client} }
 
 type dnspodApi struct{ *dnspod.Client }
 
+func (a *dnspodApi) LineList() (resp LineListResp) {
+	lines := []LineListRespLine{
+		{"0", "默认"},
+		{"10=1", "中国电信"},
+		{"10=0", "中国联通"},
+		{"10=3", "中国移动"},
+		{"3=0", "境外"},
+	}
+	return LineListResp{lines}
+}
+
 func (a *dnspodApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	req0 := dnspod.NewDescribeDomainListRequest()
 	req0.Keyword = tea.String(req.Domain)
@@ -39,8 +50,10 @@ func (a *dnspodApi) DomainAdd(req DomainAddReq) (resp DomainAddResp, err error) 
 }
 
 func (a *dnspodApi) DomainDelete(req DomainDeleteReq) (err error) {
-	// TODO implement me
-	panic("implement me")
+	req0 := dnspod.NewDeleteDomainRequest()
+	req0.Domain = tea.String(req.Domain)
+	_, err = a.DeleteDomain(req0)
+	return
 }
 
 func (a *dnspodApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
@@ -64,6 +77,7 @@ func (a *dnspodApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) 
 	req0.SubDomain = tea.String(req.Record)
 	req0.RecordType = tea.String(req.Type)
 	req0.Value = tea.String(req.Value)
+	req0.RecordLineId = tea.String(req.Line)
 	req0.TTL = tea.Uint64(uint64(req.TTL))
 	req0.MX = tea.Uint64(uint64(req.MX))
 	req0.Weight = tea.Uint64(uint64(req.Weight))
@@ -78,6 +92,7 @@ func (a *dnspodApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, er
 	req0.SubDomain = tea.String(req.Record)
 	req0.RecordType = tea.String(req.Type)
 	req0.Value = tea.String(req.Value)
+	req0.RecordLineId = tea.String(req.Line)
 	req0.TTL = tea.Uint64(uint64(req.TTL))
 	req0.MX = tea.Uint64(uint64(req.MX))
 	req0.Weight = tea.Uint64(uint64(req.Weight))

@@ -14,10 +14,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/cloudflare/cloudflare-go"
+	"strings"
 )
 
 func CloudflareApi(cApi *cloudflare.API) Api { return &cloudflareApi{cApi} }
@@ -35,6 +34,10 @@ func (a *cloudflareApi) toParams(str string) []string {
 		return []string{}
 	}
 	return []string{str}
+}
+
+func (a *cloudflareApi) LineList() (resp LineListResp) {
+	return LineListResp{[]LineListRespLine{{"0", "默认"}}}
 }
 
 func (a *cloudflareApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {

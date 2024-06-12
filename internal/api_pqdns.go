@@ -75,9 +75,22 @@ func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 	return
 }
 
+func (a *pqdnsApi) LineList() (resp LineListResp) {
+	lines := []LineListRespLine{
+		{"9065", "默认"},
+		{"4", "电信"},
+		{"2971", "联通"},
+		{"5643", "移动"},
+		{"8542", "境外"},
+	}
+	return LineListResp{lines}
+}
+
 func (a *pqdnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
-	// TODO implement me
-	panic("implement me")
+	var rsp pqdnsDomainListResp
+	apiUrl := fmt.Sprintf("/api/ext/dns/domain?domain=%s&page=%d&limit=%d", req.Domain, req.Page, req.Limit)
+	err = a.req(apiUrl, http.MethodGet, nil, &rsp)
+	return
 }
 
 // DomainAdd
@@ -96,7 +109,7 @@ func (a *pqdnsApi) DomainDelete(req DomainDeleteReq) (err error) {
 
 func (a *pqdnsApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
 	var rsp pqdnsRecordListResp
-	apiUrl := fmt.Sprintf("/api/ext/dns/record?host_record=%s&record_value=%s", req.Record, req.Value)
+	apiUrl := fmt.Sprintf("/api/ext/dns/record?host_record=%s&record_value=%s&page=%d&limit=%d", req.Record, req.Value, req.Page, req.Limit)
 	err = a.req(apiUrl, http.MethodGet, nil, &rsp)
 	resp = rsp.transform()
 	return
@@ -130,6 +143,11 @@ func (a *pqdnsApi) RecordDisable(_ RecordDisableReq) (err error) { return ErrNot
 func (a *pqdnsApi) RecordStatusSupported() (supported bool) { return }
 
 type (
+	pqdnsDomainListReq struct {
+		Username  string `json:"username"`
+		SecretKey string `json:"secret_key"`
+		Domain    string `json:"domain"` // 域名
+	}
 	pqdnsDomainAddReq struct {
 		Username  string `json:"username"`
 		SecretKey string `json:"secret_key"`
@@ -173,6 +191,18 @@ type (
 )
 
 type (
+	pqdnsDomainListResp struct {
+		Total uint                        `json:"total"`
+		List  []pqdnsRecordListRespDomain `json:"list"`
+	}
+	pqdnsRecordListRespDomain struct {
+		Id          string   `json:"id"`
+		Name        string   `json:"name"`
+		DnsServer   []string `json:"tip_ns_value"`
+		RecordCount uint     `json:"record_count"`
+		Remark      string   `json:"remark"`
+		CreateTime  string   `json:"create_time"`
+	}
 	pqdnsRecordListResp struct {
 		Total uint                        `json:"total"`
 		List  []pqdnsRecordListRespRecord `json:"list"`
@@ -232,7 +262,7 @@ func (a *pqdnsRecordAddReq) transform(username, secretKey string, req RecordAddR
 		Host:      req.Record,
 		RecType:   req.Type,
 		RecValue:  req.Value,
-		LineId:    uint(1),
+		LineId:    toUint(req.Line),
 		MX:        req.MX,
 		Weight:    req.Weight,
 		TTL:       req.TTL,
@@ -247,7 +277,7 @@ func (a *pqdnsRecordUpdateReq) transform(username, secretKey string, req RecordU
 		Host:      req.Record,
 		RecType:   req.Type,
 		RecValue:  req.Value,
-		LineId:    uint(1),
+		LineId:    toUint(req.Line),
 		MX:        req.MX,
 		Weight:    req.Weight,
 		TTL:       req.TTL,

@@ -12,6 +12,13 @@
 package internal
 
 type (
+	LineListResp struct {
+		List []LineListRespLine `json:"list"`
+	}
+	LineListRespLine struct {
+		Id   string `json:"id"`   // 线路id
+		Name string `json:"name"` // 线路名称
+	}
 	DomainListResp struct {
 		Total uint                   `json:"total"`
 		List  []DomainListRespDomain `json:"list"`
