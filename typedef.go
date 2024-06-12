@@ -27,6 +27,7 @@ type (
 	RecordEnableReq  = internal.RecordEnableReq
 	RecordDisableReq = internal.RecordDisableReq
 
+	LineListResp   = internal.LineListResp
 	DomainListResp = internal.DomainListResp
 	DomainAddResp  = internal.DomainAddResp
 
