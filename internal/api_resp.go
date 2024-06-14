@@ -50,6 +50,7 @@ type (
 		MX         uint16 `json:"mx"`          // MX => 1
 		Weight     uint   `json:"weight"`      // 权重 => 5
 		Remark     string `json:"remark"`      // 备注
+		Status     string `json:"status"`      // 状态
 		CreateTime string `json:"create_time"` // 创建时间 => 2022-09-27 08:09:25
 		UpdateTime string `json:"update_time"` // 修改时间 => 2022-09-27 08:09:25
 	}

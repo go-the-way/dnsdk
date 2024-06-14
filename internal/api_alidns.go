@@ -157,6 +157,7 @@ func (_ *RecordListRespRecord) transformFromAlidns(a *alidns.DescribeDomainRecor
 		MX:         uint16(tea.Int64Value(a.Priority)),
 		Weight:     uint(tea.Int32Value(a.Weight)),
 		Remark:     tea.StringValue(a.Remark),
+		Status:     strings.ToLower(tea.StringValue(a.Status)),
 		CreateTime: formatTime(time.UnixMilli(tea.Int64Value(a.CreateTimestamp))),
 		UpdateTime: formatTime(time.UnixMilli(tea.Int64Value(a.UpdateTimestamp))),
 	}

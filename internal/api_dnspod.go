@@ -178,6 +178,7 @@ func (*RecordListRespRecord) dnspodRecordTransform(a *dnspod.RecordListItem) (re
 		MX:         uint16(tea.Uint64Value(a.MX)),
 		Weight:     uint(tea.Uint64Value(a.Weight)),
 		Remark:     tea.StringValue(a.Remark),
+		Status:     strings.ToLower(tea.StringValue(a.Status)),
 		CreateTime: tea.StringValue(a.UpdatedOn),
 		UpdateTime: tea.StringValue(a.UpdatedOn),
 	}
