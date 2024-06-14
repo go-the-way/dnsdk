@@ -27,9 +27,9 @@ type dnspodApi struct{ *dnspod.Client }
 func (a *dnspodApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
 		{"0", "默认"},
-		{"10=1", "中国电信"},
-		{"10=0", "中国联通"},
-		{"10=3", "中国移动"},
+		{"10=1", "电信"},
+		{"10=0", "联通"},
+		{"10=3", "移动"},
 		{"3=0", "境外"},
 	}
 	return LineListResp{lines}

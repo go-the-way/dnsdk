@@ -14,9 +14,10 @@ package internal
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/cloudflare/cloudflare-go"
-	"strings"
 )
 
 func CloudflareApi(cApi *cloudflare.API) Api { return &cloudflareApi{cApi} }
