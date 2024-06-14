@@ -211,6 +211,9 @@ func (r *RecordListResp) transformFromDnspod(a *dnspod.DescribeRecordListRespons
 		if errors.As(err0, &sdkError) {
 			if _, ignored := ignoreCodesMap[sdkError.Code]; ignored {
 				// ignored
+			} else {
+				err = err0
+				return
 			}
 		} else {
 			err = err0
