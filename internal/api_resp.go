@@ -45,6 +45,7 @@ type (
 		Name       string `json:"name"`        // 名称 => www.example.com
 		Type       string `json:"type"`        // 类型 => A
 		Value      string `json:"value"`       // 记录值 => 1.1.1.1
+		Line       string `json:"line"`        // 线路 => default
 		TTL        uint   `json:"ttl"`         // TTL => 60
 		MX         uint16 `json:"mx"`          // MX => 1
 		Weight     uint   `json:"weight"`      // 权重 => 5

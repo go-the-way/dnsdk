@@ -154,6 +154,7 @@ func (_ *RecordListRespRecord) transformFromCloudflare(a cloudflare.DNSRecord) (
 		Name:       a.Name,
 		Type:       a.Type,
 		Value:      a.Content,
+		Line:       "0",
 		TTL:        uint(a.TTL),
 		MX:         tea.Uint16Value(a.Priority),
 		Remark:     a.Comment,

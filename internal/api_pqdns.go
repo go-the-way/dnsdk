@@ -244,6 +244,7 @@ func (a *pqdnsRecordListResp) transform() (resp RecordListResp) {
 			Name:       fmt.Sprintf("%s.%s", rc.HostRecord, rc.DomainName),
 			Type:       rc.RecordType,
 			Value:      rc.RecordValue,
+			Line:       fmt.Sprintf("%d", rc.LineId),
 			TTL:        uint(rc.TTL),
 			MX:         uint16(rc.MX),
 			Weight:     uint(rc.Weight),

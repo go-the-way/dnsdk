@@ -169,10 +169,11 @@ func (*DomainAddResp) transformFromDnspod(a *dnspod.CreateDomainResponse, err0 e
 func (*RecordListRespRecord) dnspodRecordTransform(a *dnspod.RecordListItem) (record RecordListRespRecord) {
 	return RecordListRespRecord{
 		Id:         fmt.Sprintf("%d", tea.Uint64Value(a.RecordId)),
-		Record:     "", // TODO: replace from name
-		Name:       tea.StringValue(a.Name),
+		Record:     tea.StringValue(a.Name),
+		Name:       "", // TODO:
 		Type:       tea.StringValue(a.Type),
 		Value:      tea.StringValue(a.Value),
+		Line:       tea.StringValue(a.LineId),
 		TTL:        uint(tea.Uint64Value(a.TTL)),
 		MX:         uint16(tea.Uint64Value(a.MX)),
 		Weight:     uint(tea.Uint64Value(a.Weight)),
