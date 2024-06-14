@@ -109,7 +109,7 @@ func (a *pqdnsApi) DomainDelete(req DomainDeleteReq) (err error) {
 
 func (a *pqdnsApi) RecordList(req RecordListReq) (resp RecordListResp, err error) {
 	var rsp pqdnsRecordListResp
-	apiUrl := fmt.Sprintf("/api/ext/dns/record?host_record=%s&record_value=%s&page=%d&limit=%d", req.Record, req.Value, req.Page, req.Limit)
+	apiUrl := fmt.Sprintf("/api/ext/dns/record?host_record=%s&record_value=%s&line_id=%s&page=%d&limit=%d", req.Record, req.Value, req.Line, req.Page, req.Limit)
 	err = a.req(apiUrl, http.MethodGet, nil, &rsp)
 	resp = rsp.transform()
 	return

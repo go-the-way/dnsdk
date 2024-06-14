@@ -63,6 +63,7 @@ func (a *dnspodApi) RecordList(req RecordListReq) (resp RecordListResp, err erro
 	req0.Subdomain = tea.String(req.Record)
 	req0.RecordType = tea.String(req.Type)
 	req0.Keyword = tea.String(req.Value)
+	req0.RecordLineId = tea.String(req.Line)
 	req0.SortField = tea.String(req.Order)
 	req0.SortType = tea.String(strings.ToUpper(req.Direction))
 	req0.Offset = tea.Uint64(uint64((req.Page - 1) * req.Limit))

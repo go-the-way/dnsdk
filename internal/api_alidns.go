@@ -57,6 +57,7 @@ func (a *alidnsApi) RecordList(req RecordListReq) (resp RecordListResp, err erro
 	return resp.transformFromAlidns(a.DescribeDomainRecords(&alidns.DescribeDomainRecordsRequest{
 		Direction:    tea.String(strings.ToUpper(req.Direction)),
 		DomainName:   tea.String(req.Domain),
+		Line:         tea.String(req.Line),
 		OrderBy:      tea.String(req.Order),
 		PageNumber:   tea.Int64(int64(req.Page)),
 		PageSize:     tea.Int64(int64(req.Limit)),

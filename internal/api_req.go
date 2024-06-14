@@ -22,23 +22,24 @@ type (
 	}
 	DomainDeleteReq struct {
 		Domain   string `json:"domain"`    // 域名 => example.com
-		DomainId string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
 	}
 	DomainEnableReq struct {
 		Domain   string `json:"domain"`    // 域名 => example.com
-		DomainId string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
 	}
 	DomainDisableReq struct {
 		Domain   string `json:"domain"`    // 域名 => example.com
-		DomainId string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
+		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
 	}
 	RecordListReq struct {
 		Page      uint   `form:"page"`      // 页码 => 1
 		Limit     uint   `form:"limit"`     // 每页数量 => 10
 		DomainId  string `form:"domain_id"` // 域名Id => xxxxxxxxxxxx
-		Domain    string `json:"domain"`    // 域名 => example.com
-		Record    string `json:"record"`    // 主机记录 => www
+		Domain    string `form:"domain"`    // 域名 => example.com
+		Record    string `form:"record"`    // 主机记录 => www
 		Type      string `form:"type"`      // 解析类型 => A
+		Line      string `form:"line"`      // 线路id => default
 		Value     string `form:"value"`     // 记录值 => 1.1.1.1
 		Remark    string `form:"remark"`    // 备注 => created by dnsdk
 		Order     string `form:"order"`     // 排序 => type
