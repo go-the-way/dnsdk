@@ -61,7 +61,6 @@ type (
 		DomainId string `json:"domain_id"` // 域名Id => xxxxxxxxxxxx
 		Domain   string `json:"domain"`    // 域名 => example.com
 		Record   string `json:"record"`    // 主机记录 => www
-		Name     string `json:"name"`      // 名称 => www.example.com
 		Type     string `json:"type"`      // 类型 => A
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
 		Line     string `json:"line"`      //  线路 => 0

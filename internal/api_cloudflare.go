@@ -95,7 +95,7 @@ func (a *cloudflareApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp
 		a.rc(req.DomainId),
 		cloudflare.UpdateDNSRecordParams{
 			Type:     req.Type,
-			Name:     req.Name,
+			Name:     fmt.Sprintf("%s.%s", req.Record, req.Domain),
 			Content:  req.Value,
 			ID:       req.RecordId,
 			Priority: tea.Uint16(uint16(req.MX)),
