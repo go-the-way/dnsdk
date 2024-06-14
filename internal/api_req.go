@@ -76,6 +76,7 @@ type (
 	}
 	RecordEnableReq struct {
 		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
+		Domain   string `json:"domain"`    // 域名 => example.com
 	}
 	RecordDisableReq RecordEnableReq
 )

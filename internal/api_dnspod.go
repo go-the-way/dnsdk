@@ -108,9 +108,10 @@ func (a *dnspodApi) RecordDelete(req RecordDeleteReq) (err error) {
 	return
 }
 
-func (a *dnspodApi) recordStatus(recordId string, status string) (err error) {
+func (a *dnspodApi) recordStatus(domain, recordId string, status string) (err error) {
 	req0 := dnspod.NewModifyRecordStatusRequest()
 	req0.RecordId = toUint64Ptr(recordId)
+	req0.Domain = tea.String(domain)
 	req0.Status = tea.String(status)
 	_, err = a.ModifyRecordStatus(req0)
 	return
