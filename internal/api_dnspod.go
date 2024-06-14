@@ -12,11 +12,13 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/alibabacloud-go/tea/tea"
 
+	dnspodErrors "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	dnspod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod/v20210323"
 )
 
@@ -201,8 +203,19 @@ func (*RecordListRespRecord) dnspodRecordTransformUpdate(a *dnspod.ModifyRecordR
 }
 
 func (r *RecordListResp) transformFromDnspod(a *dnspod.DescribeRecordListResponse, err0 error) (resp RecordListResp, err error) {
-	if err = err0; err != nil {
-		return
+	ignoreCodesMap := map[string]struct{}{
+		"ResourceNotFound.NoDataOfRecord": {},
+	}
+	if err0 != nil {
+		var sdkError *dnspodErrors.TencentCloudSDKError
+		if errors.As(err, &sdkError) {
+			if _, ignored := ignoreCodesMap[sdkError.Code]; ignored {
+				// ignored
+			}
+		} else {
+			err = err0
+			return
+		}
 	}
 	aa := a.Response
 	if aa == nil {
