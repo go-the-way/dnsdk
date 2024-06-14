@@ -118,11 +118,11 @@ func (a *dnspodApi) recordStatus(domain, recordId string, status string) (err er
 }
 
 func (a *dnspodApi) RecordEnable(req RecordEnableReq) (err error) {
-	return a.recordStatus(req.RecordId, "ENABLE")
+	return a.recordStatus(req.Domain, req.RecordId, "ENABLE")
 }
 
 func (a *dnspodApi) RecordDisable(req RecordDisableReq) (err error) {
-	return a.recordStatus(req.RecordId, "DISABLE")
+	return a.recordStatus(req.Domain, req.RecordId, "DISABLE")
 }
 
 func (*DomainListResp) transformFromDnspod(a *dnspod.DescribeDomainListResponse, err0 error) (resp DomainListResp, err error) {
