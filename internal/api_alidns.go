@@ -107,8 +107,6 @@ func (a *alidnsApi) RecordDisable(req RecordDisableReq) (err error) {
 	return a.recordStatus(req.RecordId, "Disable")
 }
 
-func (a *alidnsApi) RecordStatusSupported() (supported bool) { return true }
-
 func (_ *DomainListRespDomain) transformFromAlidns(a *alidns.DescribeDomainsResponseBodyDomainsDomain) (domain DomainListRespDomain) {
 	return DomainListRespDomain{
 		Id:   tea.StringValue(a.DomainId),

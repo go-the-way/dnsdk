@@ -140,8 +140,6 @@ func (a *pqdnsApi) RecordEnable(_ RecordEnableReq) (err error) { return ErrNotSu
 
 func (a *pqdnsApi) RecordDisable(_ RecordDisableReq) (err error) { return ErrNotSupportedOperation }
 
-func (a *pqdnsApi) RecordStatusSupported() (supported bool) { return }
-
 type (
 	pqdnsDomainListReq struct {
 		Username  string `json:"username"`

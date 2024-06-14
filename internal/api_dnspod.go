@@ -124,8 +124,6 @@ func (a *dnspodApi) RecordDisable(req RecordDisableReq) (err error) {
 	return a.recordStatus(req.RecordId, "DISABLE")
 }
 
-func (a *dnspodApi) RecordStatusSupported() (supported bool) { return true }
-
 func (*DomainListResp) transformFromDnspod(a *dnspod.DescribeDomainListResponse, err0 error) (resp DomainListResp, err error) {
 	if err = err0; err != nil {
 		return

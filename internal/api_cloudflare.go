@@ -117,8 +117,6 @@ func (a *cloudflareApi) RecordDisable(_ RecordDisableReq) (err error) {
 	return ErrNotSupportedOperation
 }
 
-func (a *cloudflareApi) RecordStatusSupported() (supported bool) { return }
-
 func (_ *DomainListResp) transformFromCloudflare(zones []cloudflare.Zone, err0 error) (resp DomainListResp, err error) {
 	if err = err0; err != nil {
 		return

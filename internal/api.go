@@ -22,5 +22,4 @@ type Api interface {
 	RecordDelete(req RecordDeleteReq) (err error)                        // 记录删除
 	RecordEnable(req RecordEnableReq) (err error)                        // 记录启用
 	RecordDisable(req RecordDisableReq) (err error)                      // 记录暂停
-	RecordStatusSupported() (supported bool)                             // 记录支持状态？
 }
