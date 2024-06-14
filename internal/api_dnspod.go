@@ -207,8 +207,8 @@ func (r *RecordListResp) transformFromDnspod(a *dnspod.DescribeRecordListRespons
 		"ResourceNotFound.NoDataOfRecord": {},
 	}
 	if err0 != nil {
-		var sdkError dnspodErrors.TencentCloudSDKError
-		if errors.As(err, &sdkError) {
+		var sdkError *dnspodErrors.TencentCloudSDKError
+		if errors.As(err0, &sdkError) {
 			if _, ignored := ignoreCodesMap[sdkError.Code]; ignored {
 				// ignored
 			}
