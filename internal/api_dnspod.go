@@ -110,25 +110,27 @@ func (a *dnspodApi) RecordDelete(req RecordDeleteReq) (err error) {
 	req0 := dnspod.NewDeleteRecordRequest()
 	req0.RecordId = toUint64Ptr(req.RecordId)
 	req0.DomainId = toUint64Ptr(req.DomainId)
+	req0.Domain = tea.String("")
 	_, err = a.DeleteRecord(req0)
 	return
 }
 
-func (a *dnspodApi) recordStatus(domain, recordId string, status string) (err error) {
+func (a *dnspodApi) recordStatus(domainId, recordId string, status string) (err error) {
 	req0 := dnspod.NewModifyRecordStatusRequest()
 	req0.RecordId = toUint64Ptr(recordId)
-	req0.Domain = tea.String(domain)
+	req0.DomainId = toUint64Ptr(domainId)
+	req0.Domain = tea.String("")
 	req0.Status = tea.String(status)
 	_, err = a.ModifyRecordStatus(req0)
 	return
 }
 
 func (a *dnspodApi) RecordEnable(req RecordEnableReq) (err error) {
-	return a.recordStatus(req.Domain, req.RecordId, "ENABLE")
+	return a.recordStatus(req.DomainId, req.RecordId, "ENABLE")
 }
 
 func (a *dnspodApi) RecordDisable(req RecordDisableReq) (err error) {
-	return a.recordStatus(req.Domain, req.RecordId, "DISABLE")
+	return a.recordStatus(req.DomainId, req.RecordId, "DISABLE")
 }
 
 func (*DomainListResp) transformFromDnspod(a *dnspod.DescribeDomainListResponse, err0 error) (resp DomainListResp, err error) {
