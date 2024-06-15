@@ -27,11 +27,14 @@ type (
 	RecordEnableReq  = internal.RecordEnableReq
 	RecordDisableReq = internal.RecordDisableReq
 
-	LineListResp   = internal.LineListResp
-	DomainListResp = internal.DomainListResp
-	DomainAddResp  = internal.DomainAddResp
+	LineListResp         = internal.LineListResp
+	LineListRespLine     = internal.LineListRespLine
+	DomainListResp       = internal.DomainListResp
+	DomainListRespDomain = internal.DomainListRespDomain
+	DomainAddResp        = internal.DomainAddResp
 
-	RecordListResp   = internal.RecordListResp
-	RecordAddResp    = internal.RecordAddResp
-	RecordUpdateResp = internal.RecordUpdateResp
+	RecordListResp       = internal.RecordListResp
+	RecordListRespRecord = internal.RecordListRespRecord
+	RecordAddResp        = internal.RecordAddResp
+	RecordUpdateResp     = internal.RecordUpdateResp
 )
