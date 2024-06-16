@@ -23,6 +23,8 @@ import (
 	"time"
 )
 
+var pqdnsLineDef = LineListRespLine{"9065", "默认"}
+
 func PqdnsApi(baseUrl, username, secretKey string) Api {
 	return &pqdnsApi{baseUrl, username, secretKey}
 }
@@ -77,7 +79,7 @@ func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 
 func (a *pqdnsApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
-		{"9065", "默认"},
+		pqdnsLineDef,
 		{"4", "电信"},
 		{"2971", "联通"},
 		{"5643", "移动"},
@@ -85,6 +87,8 @@ func (a *pqdnsApi) LineList() (resp LineListResp) {
 	}
 	return LineListResp{lines}
 }
+
+func (a *pqdnsApi) LineDefault() (resp LineListRespLine) { return pqdnsLineDef }
 
 func (a *pqdnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	var rsp pqdnsDomainListResp

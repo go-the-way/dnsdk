@@ -20,6 +20,8 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 )
 
+var cloudflareLineDef = LineListRespLine{"default", "默认"}
+
 func CloudflareApi(cApi *cloudflare.API) Api { return &cloudflareApi{cApi} }
 
 type cloudflareApi struct{ *cloudflare.API }
@@ -38,7 +40,11 @@ func (a *cloudflareApi) toParams(str string) []string {
 }
 
 func (a *cloudflareApi) LineList() (resp LineListResp) {
-	return LineListResp{[]LineListRespLine{{"0", "默认"}}}
+	return LineListResp{[]LineListRespLine{cloudflareLineDef}}
+}
+
+func (a *cloudflareApi) LineDefault() (resp LineListRespLine) {
+	return cloudflareLineDef
 }
 
 func (a *cloudflareApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {

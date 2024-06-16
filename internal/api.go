@@ -13,6 +13,7 @@ package internal
 
 type Api interface {
 	LineList() (resp LineListResp)                                       // 线路列表
+	LineDefault() (resp LineListRespLine)                                // 线路默认
 	DomainList(req DomainListReq) (resp DomainListResp, err error)       // 域名列表
 	DomainAdd(req DomainAddReq) (resp DomainAddResp, err error)          // 域名添加
 	DomainDelete(req DomainDeleteReq) (err error)                        // 域名删除

@@ -22,13 +22,15 @@ import (
 	dnspod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod/v20210323"
 )
 
+var dnspodLineDef = LineListRespLine{"0", "默认"}
+
 func DnspodApi(client *dnspod.Client) Api { return &dnspodApi{client} }
 
 type dnspodApi struct{ *dnspod.Client }
 
 func (a *dnspodApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
-		{"0", "默认"},
+		dnspodLineDef,
 		{"10=1", "电信"},
 		{"10=0", "联通"},
 		{"10=3", "移动"},
@@ -36,6 +38,8 @@ func (a *dnspodApi) LineList() (resp LineListResp) {
 	}
 	return LineListResp{lines}
 }
+
+func (a *dnspodApi) LineDefault() (resp LineListRespLine) { return dnspodLineDef }
 
 func (a *dnspodApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	req0 := dnspod.NewDescribeDomainListRequest()

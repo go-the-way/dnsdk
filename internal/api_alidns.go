@@ -19,13 +19,15 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 )
 
+var alidnsLineDef = LineListRespLine{"default", "默认"}
+
 func AlidnsApi(client *alidns.Client) Api { return &alidnsApi{client} }
 
 type alidnsApi struct{ *alidns.Client }
 
 func (a *alidnsApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
-		{"default", "默认"},
+		alidnsLineDef,
 		{"telecom", "电信"},
 		{"unicom", "联通"},
 		{"mobile", "移动"},
@@ -33,6 +35,8 @@ func (a *alidnsApi) LineList() (resp LineListResp) {
 	}
 	return LineListResp{lines}
 }
+
+func (a *alidnsApi) LineDefault() (resp LineListRespLine) { return alidnsLineDef }
 
 func (a *alidnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error) {
 	return resp.transformFromAlidns(a.DescribeDomains(&alidns.DescribeDomainsRequest{
