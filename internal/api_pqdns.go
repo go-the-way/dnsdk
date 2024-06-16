@@ -97,11 +97,22 @@ func (a *pqdnsApi) DomainList(req DomainListReq) (resp DomainListResp, err error
 	return
 }
 
-// DomainAdd
-// TODO: pqdns domain add successful,then return domain id & ns server
 func (a *pqdnsApi) DomainAdd(req DomainAddReq) (resp DomainAddResp, err error) {
 	apiUrl := "/api/ext/dns/domain"
 	err = a.req(apiUrl, http.MethodPost, (&pqdnsDomainAddReq{}).transform(a.username, a.secretKey, req), &resp)
+	if err != nil {
+		return
+	}
+	domainListResp, err0 := a.DomainList(DomainListReq{Page: 1, Limit: 1, Domain: req.Domain})
+	if err0 != nil {
+		err = err0
+		return
+	}
+	for _, do0 := range domainListResp.List {
+		resp.Id = do0.Id
+		resp.DnsServer = do0.DnsServer
+		break
+	}
 	return
 }
 
