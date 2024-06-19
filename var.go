@@ -62,11 +62,9 @@ func GetSupportApi[T, R any](t T, supporter0 supporter[T, R]) (a Api, err error)
 
 func newAlidnsApi(opts *AlidnsSupportOpts) (a Api, err error) {
 	client, err0 := alidns.NewClient(&openapi.Config{
-		AccessKeyId:        tea.String(opts.accessKeyId),
-		AccessKeySecret:    tea.String(opts.accessKeySecret),
-		Endpoint:           tea.String(opts.endpoint),
-		SignatureVersion:   tea.String(opts.signatureVersion),
-		SignatureAlgorithm: tea.String(opts.signatureAlgorithm),
+		AccessKeyId:     tea.String(opts.accessKeyId),
+		AccessKeySecret: tea.String(opts.accessKeySecret),
+		Endpoint:        tea.String(opts.endpoint),
 	})
 	if err = err0; err != nil {
 		return
