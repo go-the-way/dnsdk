@@ -15,24 +15,14 @@ func AlidnsSupporter[T any](supportFunc SupportFunc[T, *AlidnsSupportOpts]) supp
 	return &defaultSupporter[T, *AlidnsSupportOpts]{ApiType: ApiTypeAlidns, SupportFunc: supportFunc}
 }
 
-const (
-	alidnsEndpoint           = "alidns.aliyuncs.com"
-	alidnsSignatureVersion   = "1.0"
-	alidnsSignatureAlgorithm = "HMAC-MD5"
-)
+const alidnsEndpoint = "alidns.aliyuncs.com"
 
 type AlidnsSupportOpts struct {
-	accessKeyId        string
-	accessKeySecret    string
-	endpoint           string
-	signatureVersion   string
-	signatureAlgorithm string
+	accessKeyId     string
+	accessKeySecret string
+	endpoint        string
 }
 
 func NewAlidnsSupportOpts(accessKeyId string, accessKeySecret string) *AlidnsSupportOpts {
-	return NewAlidnsSupportOptsWithParams(accessKeyId, accessKeySecret, alidnsEndpoint, alidnsSignatureVersion, alidnsSignatureAlgorithm)
-}
-
-func NewAlidnsSupportOptsWithParams(accessKeyId string, accessKeySecret string, endpoint string, signatureVersion string, signatureAlgorithm string) *AlidnsSupportOpts {
-	return &AlidnsSupportOpts{accessKeyId, accessKeySecret, endpoint, signatureVersion, signatureAlgorithm}
+	return &AlidnsSupportOpts{accessKeyId, accessKeySecret, alidnsEndpoint}
 }

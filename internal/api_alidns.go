@@ -44,7 +44,7 @@ func (a *alidnsApi) DomainList(req DomainListReq) (resp DomainListResp, err erro
 		PageNumber: tea.Int64(int64(req.Page)),
 		PageSize:   tea.Int64(int64(req.Limit)),
 		SearchMode: tea.String("EXACT"),
-		Starmark:   tea.Bool(true),
+		Starmark:   tea.Bool(false),
 	}))
 }
 
