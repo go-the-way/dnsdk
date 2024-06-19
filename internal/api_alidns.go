@@ -74,7 +74,7 @@ func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) 
 	return resp.transformFromAlidns(a.AddDomainRecord(&alidns.AddDomainRecordRequest{
 		DomainName: tea.String(req.Domain),
 		Line:       tea.String(req.Line),
-		Priority:   tea.Int64(int64(req.MX)),
+		Priority:   tea.Int64(1),
 		RR:         tea.String(req.Record),
 		TTL:        tea.Int64(int64(req.TTL)),
 		Type:       tea.String(req.Type),
@@ -85,7 +85,7 @@ func (a *alidnsApi) RecordAdd(req RecordAddReq) (resp RecordAddResp, err error) 
 func (a *alidnsApi) RecordUpdate(req RecordUpdateReq) (resp RecordUpdateResp, err error) {
 	return resp.transformFromAlidns(a.UpdateDomainRecord(&alidns.UpdateDomainRecordRequest{
 		Line:     tea.String(req.Line),
-		Priority: tea.Int64(int64(req.MX)),
+		Priority: tea.Int64(1),
 		RR:       tea.String(req.Record),
 		RecordId: tea.String(req.RecordId),
 		TTL:      tea.Int64(int64(req.TTL)),

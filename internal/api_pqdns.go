@@ -277,7 +277,7 @@ func (a *pqdnsRecordAddReq) transform(username, secretKey string, req RecordAddR
 		RecType:   req.Type,
 		RecValue:  req.Value,
 		LineId:    toUint(req.Line),
-		MX:        req.MX,
+		MX:        1,
 		Weight:    req.Weight,
 		TTL:       req.TTL,
 	}
@@ -292,7 +292,7 @@ func (a *pqdnsRecordUpdateReq) transform(username, secretKey string, req RecordU
 		RecType:   req.Type,
 		RecValue:  req.Value,
 		LineId:    toUint(req.Line),
-		MX:        req.MX,
+		MX:        1,
 		Weight:    req.Weight,
 		TTL:       req.TTL,
 	}

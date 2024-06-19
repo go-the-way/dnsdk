@@ -53,9 +53,9 @@ type (
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
 		Line     string `json:"line"`      //  线路 => 0
 		TTL      uint   `json:"ttl"`       // TTL => 60
-		MX       uint   `json:"mx"`        // MX => only for mx type
-		Weight   uint   `json:"weight"`    // 权重 => 100
-		Remark   string `json:"remark"`    // 备注 => created by dnsdk
+		//	MX       uint   `json:"mx"`        // MX => only for mx type
+		Weight uint   `json:"weight"` // 权重 => 100
+		Remark string `json:"remark"` // 备注 => created by dnsdk
 	}
 	RecordUpdateReq struct {
 		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
@@ -66,9 +66,9 @@ type (
 		Value    string `json:"value"`     // 记录值 => 1.1.1.1
 		Line     string `json:"line"`      //  线路 => 0
 		TTL      uint   `json:"ttl"`       // TTL => 60
-		MX       uint   `json:"mx"`        // MX => only for mx type
-		Weight   uint   `json:"weight"`    // 权重 => 100
-		Remark   string `json:"remark"`    // 备注 => created by dnsdk
+		//	MX       uint   `json:"mx"`        // MX => only for mx type
+		Weight uint   `json:"weight"` // 权重 => 100
+		Remark string `json:"remark"` // 备注 => created by dnsdk
 	}
 	RecordDeleteReq struct {
 		RecordId string `json:"record_id"` // 记录Id => xxxxxxxxxxxx
