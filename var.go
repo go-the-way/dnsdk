@@ -16,7 +16,7 @@ import (
 
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/rwscode/dnsdk/internal"
+	"github.com/go-the-way/dnsdk/internal"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 

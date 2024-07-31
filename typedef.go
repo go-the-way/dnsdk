@@ -11,7 +11,7 @@
 
 package dnsdk
 
-import "github.com/rwscode/dnsdk/internal"
+import "github.com/go-the-way/dnsdk/internal"
 
 type (
 	Api = internal.Api

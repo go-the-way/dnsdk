@@ -1,4 +1,4 @@
-module github.com/rwscode/dnsdk
+module github.com/go-the-way/dnsdk
 
 go 1.18
 

@@ -56,7 +56,7 @@ func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 	req, _ := http.NewRequest(apiMethod, reqUrl, reader)
 	req.Header = make(http.Header)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "dnsdk (https://github.com/rwscode/dnsdk)")
+	req.Header.Set("User-Agent", "dnsdk (https://github.com/go-the-way/dnsdk)")
 	resp, err0 := client.Do(req)
 	if err0 != nil {
 		err = err0
