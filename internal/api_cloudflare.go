@@ -20,7 +20,7 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 )
 
-var cloudflareLineDef = LineListRespLine{"default", "默认"}
+var cloudflareLineDef = LineListRespLine{"0", "默认"}
 
 func CloudflareApi(cApi *cloudflare.API) Api { return &cloudflareApi{cApi} }
 
@@ -159,7 +159,7 @@ func (_ *RecordListRespRecord) transformFromCloudflare(a cloudflare.DNSRecord) (
 		Name:       a.Name,
 		Type:       a.Type,
 		Value:      a.Content,
-		Line:       "0",
+		Line:       cloudflareLineDef.Id,
 		TTL:        uint(a.TTL),
 		MX:         tea.Uint16Value(a.Priority),
 		Remark:     a.Comment,
