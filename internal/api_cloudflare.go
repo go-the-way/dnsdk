@@ -155,7 +155,7 @@ func (_ *DomainAddResp) transformFromCloudflare(a cloudflare.Zone, err0 error) (
 func (_ *RecordListRespRecord) transformFromCloudflare(a cloudflare.DNSRecord) (record RecordListRespRecord) {
 	return RecordListRespRecord{
 		Id:         a.ID,
-		Record:     strings.TrimRight(a.Name, a.ZoneName),
+		Record:     strings.TrimSuffix(strings.ReplaceAll(a.Name, a.ZoneName, ""), "."),
 		Name:       a.Name,
 		Type:       a.Type,
 		Value:      a.Content,
