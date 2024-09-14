@@ -77,6 +77,12 @@ func (a *pqdnsApi) req(apiUrl, apiMethod string, reqT, respT any) (err error) {
 	return
 }
 
+func (a *pqdnsApi) Ping() (ok bool) {
+	req, _ := http.NewRequest(http.MethodGet, a.baseUrl, nil)
+	resp, _ := (&http.Client{Timeout: time.Second * 5}).Do(req)
+	return resp.StatusCode == http.StatusOK
+}
+
 func (a *pqdnsApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
 		pqdnsLineDef,

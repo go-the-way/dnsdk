@@ -66,6 +66,7 @@ func newAlidnsApi(opts *AlidnsSupportOpts) (a Api, err error) {
 		AccessKeySecret: tea.String(opts.accessKeySecret),
 		Endpoint:        tea.String(opts.endpoint),
 	})
+
 	if err = err0; err != nil {
 		return
 	}

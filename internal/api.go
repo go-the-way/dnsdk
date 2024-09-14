@@ -12,6 +12,7 @@
 package internal
 
 type Api interface {
+	Ping() (ok bool)                                                     // Ping
 	LineList() (resp LineListResp)                                       // 线路列表
 	LineDefault() (resp LineListRespLine)                                // 线路默认
 	DomainList(req DomainListReq) (resp DomainListResp, err error)       // 域名列表
