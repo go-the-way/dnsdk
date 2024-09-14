@@ -14,7 +14,9 @@ package internal
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/cloudflare/cloudflare-go"
@@ -37,6 +39,12 @@ func (a *cloudflareApi) toParams(str string) []string {
 		return []string{}
 	}
 	return []string{str}
+}
+
+func (a *cloudflareApi) Ping() (ok bool) {
+	req, _ := http.NewRequest(http.MethodGet, a.BaseURL, nil)
+	resp, _ := (&http.Client{Timeout: time.Second * 5}).Do(req)
+	return resp.StatusCode == http.StatusOK
 }
 
 func (a *cloudflareApi) LineList() (resp LineListResp) {

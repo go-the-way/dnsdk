@@ -12,6 +12,8 @@
 package internal
 
 import (
+	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -24,6 +26,16 @@ var alidnsLineDef = LineListRespLine{"default", "默认"}
 func AlidnsApi(client *alidns.Client) Api { return &alidnsApi{client} }
 
 type alidnsApi struct{ *alidns.Client }
+
+func (a *alidnsApi) endpoint() string {
+	return fmt.Sprintf("https://%s", tea.StringValue(a.Endpoint))
+}
+
+func (a *alidnsApi) Ping() (ok bool) {
+	req, _ := http.NewRequest(http.MethodGet, a.endpoint(), nil)
+	resp, _ := (&http.Client{Timeout: time.Second * 5}).Do(req)
+	return resp.StatusCode == http.StatusOK
+}
 
 func (a *alidnsApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{

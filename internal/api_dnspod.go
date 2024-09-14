@@ -14,7 +14,10 @@ package internal
 import (
 	"errors"
 	"fmt"
+	common "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/http"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/alibabacloud-go/tea/tea"
 
@@ -27,6 +30,16 @@ var dnspodLineDef = LineListRespLine{"0", "默认"}
 func DnspodApi(client *dnspod.Client) Api { return &dnspodApi{client} }
 
 type dnspodApi struct{ *dnspod.Client }
+
+func (a *dnspodApi) endpoint() string {
+	return fmt.Sprintf("https://%s", "dnspod"+"."+common.RootDomain)
+}
+
+func (a *dnspodApi) Ping() (ok bool) {
+	req, _ := http.NewRequest(http.MethodGet, a.endpoint(), nil)
+	resp, _ := (&http.Client{Timeout: time.Second * 5}).Do(req)
+	return resp.StatusCode == http.StatusOK
+}
 
 func (a *dnspodApi) LineList() (resp LineListResp) {
 	lines := []LineListRespLine{
